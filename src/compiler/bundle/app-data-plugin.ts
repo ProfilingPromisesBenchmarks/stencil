@@ -12,6 +12,7 @@ import {
 } from './entry-alias-ids';
 import ts from 'typescript';
 import { basename } from 'path';
+import sourceMapMerge from 'merge-source-map';
 
 export const appDataPlugin = (
   config: d.Config,
@@ -91,12 +92,15 @@ export const appDataPlugin = (
         const program = this.parse(code, {});
         const needsDefault = !(program as any).body.some((s: any) => s.type === 'ExportDefaultDeclaration');
         const defaultExport = needsDefault ? '\nexport const globalFn = () => {};\nexport default globalFn;' : '';
-        code = getContextImport(platform) + code + defaultExport;
+
+        var codeMs = new MagicString(code);
+        codeMs.prepend(getContextImport(platform));
+        codeMs.append(defaultExport);
 
         const compilerOptions: ts.CompilerOptions = { ...config.tsCompilerOptions };
         compilerOptions.module = ts.ModuleKind.ESNext;
 
-        const results = ts.transpileModule(code, {
+        const results = ts.transpileModule(codeMs.toString(), {
           compilerOptions,
           fileName: id,
           transformers: {
@@ -104,13 +108,19 @@ export const appDataPlugin = (
           },
         });
         const sourceMap = results.sourceMapText ? JSON.parse(results.sourceMapText) : null;
-        if (sourceMap) {
-          // little dirty. Manually shift mappings down 1 line because of the cheeky line added ^
-          sourceMap.mappings = ';' + sourceMap.mappings;
-        }
         buildCtx.diagnostics.push(...loadTypeScriptDiagnostics(results.diagnostics));
 
-        return {code: results.outputText, map: sourceMap};
+        if (config.sourceMap) {
+          const codeMap = codeMs.generateMap({
+            source: id,
+            file: id + '.map',
+            includeContent: true,
+            hires: true
+          });
+          return {code: results.outputText, map: sourceMapMerge(codeMap, sourceMap)};
+        }
+
+        return {code: results.outputText};
       }
       return null;
     },
