@@ -54,7 +54,7 @@ export const appDataPlugin = (
       return null;
     },
 
-    load(id) {
+    load(id): d.RollupLoadHook {
       if (id === STENCIL_APP_GLOBALS_ID) {
         const s = new MagicString(``);
         appendGlobalScripts(globalScripts, s);
@@ -72,18 +72,20 @@ export const appDataPlugin = (
         return null;
       }
 
-      const mod = compilerCtx.moduleMap.get(config.globalScript);
-      if (!mod.sourceMapFileText) return {code: mod.staticSourceFileText, map: null};
+      const module = compilerCtx.moduleMap.get(config.globalScript);
+      if (!module.sourceMapFileText) return { code: module.staticSourceFileText, map: null };
 
-      const sourceMap: d.SourceMap = JSON.parse(mod.sourceMapFileText);
+      const sourceMap: d.SourceMap = JSON.parse(module.sourceMapFileText);
+
       const rollupSrcMap = {
         mappings: sourceMap.mappings,
         sourcesContent: sourceMap.sourcesContent,
         sources: sourceMap.sources.map(src => basename(src)),
         names: sourceMap.names,
-        version: sourceMap.version
+        version: sourceMap.version,
       };
-      return {code: mod.staticSourceFileText, map: rollupSrcMap};
+
+      return { code: module.staticSourceFileText, map: sourceMap, meta: rollupSrcMap };
     },
 
     transform(code, id) {
@@ -115,12 +117,12 @@ export const appDataPlugin = (
             source: id,
             file: id + '.map',
             includeContent: true,
-            hires: true
+            hires: true,
           });
-          return {code: results.outputText, map: sourceMapMerge(codeMap, sourceMap)};
+          return { code: results.outputText, map: sourceMapMerge(codeMap, sourceMap) };
         }
 
-        return {code: results.outputText};
+        return { code: results.outputText };
       }
       return null;
     },
