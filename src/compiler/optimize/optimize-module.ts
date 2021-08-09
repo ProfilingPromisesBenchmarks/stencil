@@ -20,7 +20,7 @@ export const optimizeModule = async (config: Config, compilerCtx: CompilerCtx, o
     return {
       output: opts.input,
       diagnostics: [] as Diagnostic[],
-      sourceMap: opts.sourceMap as SourceMap
+      sourceMap: opts.sourceMap as SourceMap,
     };
   }
   const isDebug = config.logLevel === 'debug';
@@ -31,7 +31,7 @@ export const optimizeModule = async (config: Config, compilerCtx: CompilerCtx, o
     return {
       output: cachedContent,
       diagnostics: [] as Diagnostic[],
-      sourceMap: cachedMap ? JSON.parse(cachedMap) as SourceMap : null
+      sourceMap: cachedMap ? (JSON.parse(cachedMap) as SourceMap) : null,
     };
   }
 
@@ -45,7 +45,7 @@ export const optimizeModule = async (config: Config, compilerCtx: CompilerCtx, o
 
   if (opts.sourceTarget === 'es5' || opts.minify) {
     minifyOpts = getTerserOptions(config, opts.sourceTarget, isDebug);
-    if (config.sourceMap) minifyOpts.sourceMap = { content: opts.sourceMap }
+    if (config.sourceMap) minifyOpts.sourceMap = { content: opts.sourceMap };
 
     const compressOpts = minifyOpts.compress as CompressOptions;
     const mangleOptions = minifyOpts.mangle as MangleOptions;
@@ -95,7 +95,7 @@ export const getTerserOptions = (config: Config, sourceTarget: SourceTarget, pre
     ie8: false,
     safari10: !!config.extras.safari10,
     format: {},
-    sourceMap: !!config.sourceMap
+    sourceMap: !!config.sourceMap,
   };
 
   if (sourceTarget === 'es5') {
@@ -146,7 +146,7 @@ export const prepareModule = async (
   const results = {
     output: input,
     diagnostics: [] as Diagnostic[],
-    sourceMap: null as SourceMap
+    sourceMap: null as SourceMap,
   };
 
   if (transpileToEs5) {
@@ -173,7 +173,7 @@ export const prepareModule = async (
         (minifyOpts.sourceMap as SourceMapOptions).content as SourceMap,
         JSON.parse(tsResults.sourceMapText)
       ) as SourceMap;
-      minifyOpts.sourceMap = {content: mergeMap};
+      minifyOpts.sourceMap = { content: mergeMap };
     }
   }
 

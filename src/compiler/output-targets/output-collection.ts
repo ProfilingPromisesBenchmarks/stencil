@@ -47,10 +47,10 @@ const writeModuleFile = async (
   const mapRelPath = relative(config.srcDir, moduleFile.sourceMapPath);
   const mapContent = await compilerCtx.fs.readFile(moduleFile.sourceMapPath);
   await Promise.all(
-    outputTargets.map(o => {
+    outputTargets.map((o) => {
       const outputFilePath = join(o.collectionDir, mapRelPath);
       return compilerCtx.fs.writeFile(outputFilePath, mapContent);
-    }),
+    })
   );
 };
 

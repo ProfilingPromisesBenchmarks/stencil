@@ -41,5 +41,5 @@ export const createModule = (
   originalImports: [],
   potentialCmpRefs: [],
   sourceMapPath: null,
-  sourceMapFileText: null
+  sourceMapFileText: null,
 });

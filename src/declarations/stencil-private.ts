@@ -2456,7 +2456,7 @@ export interface CompilerWorkerContext {
     input: string,
     minifyOpts: any,
     transpile: boolean,
-    inlineHelpers: boolean,
+    inlineHelpers: boolean
   ): Promise<{ output: string; diagnostics: Diagnostic[]; sourceMap?: SourceMap }>;
   prerenderWorker(prerenderRequest: PrerenderUrlRequest): Promise<PrerenderUrlResults>;
   transformCssToEsm(input: TransformCssToEsmInput): Promise<TransformCssToEsmOutput>;

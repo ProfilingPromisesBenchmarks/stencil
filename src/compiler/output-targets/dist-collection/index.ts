@@ -32,7 +32,7 @@ export const outputCollection = async (
             const relMapPath = relative(config.srcDir, mod.sourceMapPath);
             const mapFilePath = join(o.collectionDir, relMapPath);
             await compilerCtx.fs.writeFile(mapFilePath, mapCode, { outputTargetType: o.type });
-          }),
+          })
         );
       })
     );

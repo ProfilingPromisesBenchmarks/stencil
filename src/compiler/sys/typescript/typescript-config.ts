@@ -153,7 +153,7 @@ const createDefaultTsConfig = (config: d.Config) =>
         jsxFactory: 'h',
         jsxFragmentFactory: 'Fragment',
         sourceMap: !!config.sourceMap,
-        inlineSources: !!config.sourceMap
+        inlineSources: !!config.sourceMap,
       },
       include: [relative(config.rootDir, config.srcDir)],
     },

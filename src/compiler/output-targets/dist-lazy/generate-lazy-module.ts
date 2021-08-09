@@ -81,7 +81,7 @@ export const generateLazyModules = async (
       .filter((r) => r.type === 'asset')
       .map((r: d.RollupAssetResult) => {
         return Promise.all(
-          destinations.map(dest => {
+          destinations.map((dest) => {
             return compilerCtx.fs.writeFile(join(dest, r.fileName), r.content);
           })
         );
@@ -106,9 +106,29 @@ const generateLazyEntryModule = async (
   const entryModule = buildCtx.entryModules.find((entryModule) => entryModule.entryKey === rollupResult.entryKey);
   const shouldHash = config.hashFileNames && isBrowserBuild;
 
-  const {code, sourceMap} = await convertChunk(config, compilerCtx, buildCtx, sourceTarget, shouldMinify, false, isBrowserBuild, rollupResult.code, rollupResult.map);
+  const { code, sourceMap } = await convertChunk(
+    config,
+    compilerCtx,
+    buildCtx,
+    sourceTarget,
+    shouldMinify,
+    false,
+    isBrowserBuild,
+    rollupResult.code,
+    rollupResult.map
+  );
 
-  const output = await writeLazyModule(config, compilerCtx, outputTargetType, destinations, entryModule, shouldHash, code, sourceMap, sufix);
+  const output = await writeLazyModule(
+    config,
+    compilerCtx,
+    outputTargetType,
+    destinations,
+    entryModule,
+    shouldHash,
+    code,
+    sourceMap,
+    sufix
+  );
 
   return {
     rollupResult,
@@ -129,7 +149,17 @@ const writeLazyChunk = async (
   shouldMinify: boolean,
   isBrowserBuild: boolean
 ) => {
-  const {code, sourceMap} = await convertChunk(config, compilerCtx, buildCtx, sourceTarget, shouldMinify, rollupResult.isCore, isBrowserBuild, rollupResult.code, rollupResult.map);
+  const { code, sourceMap } = await convertChunk(
+    config,
+    compilerCtx,
+    buildCtx,
+    sourceTarget,
+    shouldMinify,
+    rollupResult.isCore,
+    isBrowserBuild,
+    rollupResult.code,
+    rollupResult.map
+  );
 
   await Promise.all(
     destinations.map((dst) => {
@@ -140,7 +170,7 @@ const writeLazyChunk = async (
         compilerCtx.fs.writeFile(filePath + '.map', JSON.stringify(sourceMap), { outputTargetType });
       }
       compilerCtx.fs.writeFile(filePath, fileCode, { outputTargetType });
-    }),
+    })
   );
 };
 
@@ -160,7 +190,17 @@ const writeLazyEntry = async (
     return;
   }
   let inputCode = rollupResult.code.replace(`[/*!__STENCIL_LAZY_DATA__*/]`, `${lazyRuntimeData}`);
-  const {code, sourceMap} = await convertChunk(config, compilerCtx, buildCtx, sourceTarget, shouldMinify, false, isBrowserBuild, inputCode, rollupResult.map );
+  const { code, sourceMap } = await convertChunk(
+    config,
+    compilerCtx,
+    buildCtx,
+    sourceTarget,
+    shouldMinify,
+    false,
+    isBrowserBuild,
+    inputCode,
+    rollupResult.map
+  );
 
   await Promise.all(
     destinations.map((dst) => {
@@ -171,7 +211,7 @@ const writeLazyEntry = async (
         compilerCtx.fs.writeFile(filePath + '.map', JSON.stringify(sourceMap), { outputTargetType });
       }
       return compilerCtx.fs.writeFile(filePath, fileCode, { outputTargetType });
-    }),
+    })
   );
 };
 
@@ -278,7 +318,7 @@ const convertChunk = async (
   isCore: boolean,
   isBrowserBuild: boolean,
   code: string,
-  rollupSrcMap: d.RollupSourceMap,
+  rollupSrcMap: d.RollupSourceMap
 ) => {
   let sourceMap = rollupSrcMapToObj(rollupSrcMap);
   const inlineHelpers = isBrowserBuild || !hasDependency(buildCtx, 'tslib');
@@ -296,5 +336,5 @@ const convertChunk = async (
     code = optimizeResults.output;
     sourceMap = optimizeResults.sourceMap;
   }
-  return {code, sourceMap};
+  return { code, sourceMap };
 };

@@ -33,7 +33,7 @@ export const outputCustomElementsBundle = async (
   }
 
   const timespan = buildCtx.createTimeSpan(
-    `generate custom elements bundle${!!config.sourceMap ? ' + source maps' : ''} started`,
+    `generate custom elements bundle${!!config.sourceMap ? ' + source maps' : ''} started`
   );
 
   await Promise.all(outputTargets.map((o) => bundleCustomElements(config, compilerCtx, buildCtx, o)));
@@ -99,7 +99,7 @@ const bundleCustomElements = async (
               JSON.stringify(sourceMap),
               {
                 outputTargetType: outputTarget.type,
-              },
+              }
             );
           }
           await compilerCtx.fs.writeFile(join(outputTarget.dir, bundle.fileName), code, {

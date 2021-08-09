@@ -76,7 +76,7 @@ export const appDataPlugin = (
       if (!module.sourceMapFileText) return { code: module.staticSourceFileText, map: null };
 
       const sourceMap: d.SourceMap = JSON.parse(module.sourceMapFileText);
-      sourceMap.sources = sourceMap.sources.map(src => basename(src));
+      sourceMap.sources = sourceMap.sources.map((src) => basename(src));
       return { code: module.staticSourceFileText, map: sourceMap };
     },
 
