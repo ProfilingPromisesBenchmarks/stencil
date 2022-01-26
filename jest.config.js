@@ -11,6 +11,7 @@ module.exports = {
     '@stencil/core/testing': '<rootDir>/testing/index.js',
     '@utils': '<rootDir>/src/utils',
   },
+  setupFiles: ['/home/drasync/ProfilingPromisesAnalysis/asyncHooks_require.js'],
   coverageDirectory: './coverage/',
   coverageReporters: ['json', 'lcov', 'text', 'clover'],
   collectCoverageFrom: [
